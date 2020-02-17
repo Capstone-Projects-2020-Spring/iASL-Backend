@@ -2,6 +2,8 @@ from pytube import YouTube, Stream
 import json
 
 #a subdirectory named "raw" must exist in the folder this script runs from
+#NOTE: youtube changed their site recently so your pytube library must be slightly different for this to work
+#      ask aidan for the fixed mixins.pyu
 
 #Handling to get list of unique URLS from JSON
 vid_urls = []
