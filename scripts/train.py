@@ -20,7 +20,7 @@ import random
 # import keras/tf modules
 #
 from keras import backend as K
-K.tensorflow_backend._get_available_gpus()
+#K.tensorflow_backend._get_available_gpus()
 from keras.models import Sequential
 from keras.layers import Conv2D, Activation, BatchNormalization
 from keras.layers import MaxPooling2D, Dense, Flatten, Dropout
@@ -156,15 +156,15 @@ def main(argv):
                      input_shape=(200, 200, 1)))
     model.add(MaxPooling2D(pool_size=(2,2)))
     model.add(BatchNormalization())
-    model.add(Conv2D(32, kernel_size = (3, 3), strides = (2,2), activation='relu'))
+    model.add(Conv2D(64, kernel_size = (3, 3), strides = (2,2), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
     model.add(BatchNormalization())
     model.add(Conv2D(32, kernel_size = (3, 3), strides = (2,2), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
     model.add(BatchNormalization())
-    model.add(Dropout(0.5))
     model.add(Flatten())
-    model.add(Dense(512, activation='relu'))
+    model.add(Dense(1024, activation='relu'))
+    model.add(Dropout(0.3))
     model.add(Dense(tr_dat_obj.num_classes, activation = 'softmax'))
 
     # define the optimizer
@@ -178,8 +178,8 @@ def main(argv):
 
     # fit the train/cv generators to the model
     #
-    model.fit_generator(generator=tr_dat_obj, epochs=epochs, verbose=1, max_queue_size=6, \
-                        workers=3, shuffle=False, callbacks=[checkpoint], validation_data=cv_dat_obj)
+    model.fit_generator(generator=tr_dat_obj, epochs=epochs, verbose=1, max_queue_size=10, \
+                        workers=6, shuffle=False, callbacks=[checkpoint], validation_data=cv_dat_obj)
 
     # conver the model to a json
     #

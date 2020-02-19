@@ -37,6 +37,7 @@ from keras.utils import Sequence, to_categorical
 DELIM_NEW_LINE = "\n"
 DELIM_FILE_SEP = "/"
 DELIM_ENV_VAR = "$"
+DELIM_NULL = ""
 
 #-----------------------------------------------------------------------------
 #
@@ -65,7 +66,7 @@ def get_lines(fname):
 
     # split by newline
     #
-    tokenized = fp.read().split(DELIM_NEW_LINE)
+    tokenized = fp.read().split()
 
     # close the file
     #
@@ -280,6 +281,8 @@ class DataGenerator(Sequence):
             # add the pair as a list to the map
             #
             self.mapping.append([fname, lbl])
+            if lbl == DELIM_NULL or fname == DELIM_NULL:
+                continue
 
         # shuffle the dataset
         #
