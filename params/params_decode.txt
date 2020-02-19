@@ -1,4 +1,4 @@
-# file: $iASL_PARAMS/params/params_decode.txt
+# file: $iASL_PARAMS/params_decode.txt
 #
 # Defines the parameters for the decoding script
 #
