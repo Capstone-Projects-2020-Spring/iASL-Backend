@@ -15,6 +15,7 @@
 #
 import os
 import sys
+import random
 
 # import keras/tf modules
 #
@@ -77,7 +78,7 @@ def main(argv):
 
     # set the output directory
     #
-    odir = iASL_OUT + argv[1]
+    odir = argv[1]
 
     # try to make the directory if it does not exist
     #
@@ -109,6 +110,12 @@ def main(argv):
     #
     files = cd.get_lines(flist)
     labels = cd.get_lines(anno)
+
+    # randomly split the dataset
+    #
+    temp_zipped = list(zip(files, labels))
+    random.shuffle(temp_zipped)
+    files, labels = zip(*temp_zipped)
 
     # get the split between train/cv
     #

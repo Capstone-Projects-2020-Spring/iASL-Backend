@@ -1,8 +1,6 @@
 #! /bin/bash
 
-iASL_BASE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-. $iASL_BASE/../_runtime_env.sh
-export iASL_BASE;
+. ../_runtime_env.sh
 
 PARAMS_DIR="$iASL_PARAMS/params_train.txt"
 ODIR_DIR="$iASL_OUT/p1_train/"

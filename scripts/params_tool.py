@@ -68,32 +68,84 @@ class ParamParser:
     # appropriately to create a dictionary mapping
     #
     def init_params(self):
+
+        # try to open the file
+        #
         try:
             fp = open(self.pfile, "r")
         except IOError as e:
             print("[%s]: %s" % (sys.argv[0], e))
             exit(-1)
+
+        # tokenize the file by new line
+        #
         content = fp.read().split(NEW_LINE)
+
+        # close the file
+        #
         fp.close()
+
+        # initially no section is found
+        #
         key = None
+
+        # for each line in the file
+        #
         for line in content:
+
+            # replace all spaces with null
+            #
             line = line.replace(SPACE, DELIM_NULL)
+
+            # if this line starts with a comment
+            #
             if(line.startswith(DELIM_COMMENT)):
                 continue
+
+            # if the line is just space
+            #
             elif(line == DELIM_NULL):
                 continue
+
+            # if we have not found a section
+            #
             if key is None:
+
+                # if the line is empty or the last char is not
+                # the delimeter
+                #
                 if len(line) == 0 or not line[-1] == DELIM_KEY:
                     continue
+
+                # grab the key
+                #
                 key = line[:-1]
+
+                # append the key to the mapping
+                #
                 self.mapping[key] = {}
+
+            # if we did find a section
+            #
             else:
+
+                # if this is the end of the section
+                #
                 if(line[-1] == DELIM_END_KEY):
                     key = None
                     continue
+
+                # tokenize by the equal sign
+                #
                 tokenized = line.split(DELIM_EQUAL)
+
+                # if we don't have two values...
+                #
                 if(len(tokenized) != 2):
                     continue
+
+                # append the key/pair value to the section
+                #
                 self.mapping[key][tokenized[0]] = tokenized[1]
     #
     # end of function
