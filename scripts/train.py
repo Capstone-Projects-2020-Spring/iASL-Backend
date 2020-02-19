@@ -108,7 +108,7 @@ def main(argv):
 
     # get the actual files and labels
     #
-    files = cd.get_lines(flist)
+    files = cd.get_flist(flist)
     labels = cd.get_lines(anno)
 
     # randomly split the dataset

@@ -28,6 +28,18 @@ from keras.utils import Sequence, to_categorical
 
 #-----------------------------------------------------------------------------
 #
+# global variables are listed here
+#
+#-----------------------------------------------------------------------------
+
+# define general global variables
+#
+DELIM_NEW_LINE = "\n"
+DELIM_FILE_SEP = "/"
+DELIM_ENV_VAR = "$"
+
+#-----------------------------------------------------------------------------
+#
 # helper functions are listed here
 #
 #-----------------------------------------------------------------------------
@@ -39,7 +51,7 @@ from keras.utils import Sequence, to_categorical
 #
 # return: tokenized - each line of the file
 #
-# This function is used to parse a file list or ref file
+# This function is used to parse a file line by line
 #
 def get_lines(fname):
 
@@ -51,9 +63,9 @@ def get_lines(fname):
         print("[%s]: %s" % (sys.argv[0], e))
         exit(-1)
 
-    # split by whitespace
+    # split by newline
     #
-    tokenized = fp.read().split()
+    tokenized = fp.read().split(DELIM_NEW_LINE)
 
     # close the file
     #
@@ -62,6 +74,73 @@ def get_lines(fname):
     # exit gracefully
     #
     return tokenized
+#
+# end of function
+
+
+# function: get_lines
+#
+# arguments: fname - path to file
+#
+# return: files - each fname in the file
+#
+# This function is used to get a list of file names
+#
+def get_flist(fname):
+
+    # try opening the file...
+    #
+    try:
+        fp = open(fname, "r")
+    except IOError as e:
+        print("[%s]: %s" % (sys.argv[0], e))
+        exit(-1)
+
+    # split by newline
+    #
+    tokenized = fp.read().split(DELIM_NEW_LINE)
+
+    # close the file
+    #
+    fp.close()
+
+    # initialize list of files
+    #
+    files = []
+
+    # for each fname in the list
+    #
+    for fname in tokenized:
+
+        # copy of fname
+        #
+        path = fname
+        
+        # tokenize the string by file seperator
+        #
+        split_path = path.split(DELIM_FILE_SEP)
+
+        # get the path without the environment variable
+        #
+        path_without_env = DELIM_FILE_SEP + DELIM_FILE_SEP.join(split_path[1:])
+
+        # get the (possible) environment variable
+        #
+        possible_env_var = split_path[0].split(DELIM_ENV_VAR)
+
+        # if there are two items in the list and it is an env var
+        # convert $iASL_VAR/path -> /foo/bar/path
+        #
+        if(len(possible_env_var) == 2 and os.environ[possible_env_var[1]]):
+            path = os.environ[possible_env_var[1]] + path_without_env
+
+        # append to the list of files
+        #
+        files.append(path)
+
+    # exit gracefully
+    #
+    return files
 #
 # end of function
 
@@ -141,16 +220,16 @@ class DataGenerator(Sequence):
     #
     # This is the constructor for the class
     #
-   def __init__(self, flist, labels, batch_size, class_mapping):
+    def __init__(self, flist, labels, batch_size, class_mapping):
 
-       # initialize the object
-       #
-       self.files = flist
-       self.lbl_mapping = class_mapping
-       self.labels = labels
-       self.batch_size = batch_size
-       self.num_classes = len(self.lbl_mapping)
-       self.init_mapping()
+        # initialize the object
+        #
+        self.files = flist
+        self.lbl_mapping = class_mapping
+        self.labels = labels
+        self.batch_size = batch_size
+        self.num_classes = len(self.lbl_mapping)
+        self.init_mapping()
     #
     # end of function
 
@@ -164,7 +243,7 @@ class DataGenerator(Sequence):
     # This method returns the number of batches in the dataset
     #
     def __len__(self):
-
+        
         # calculate as ceil(N/batch_size)
         #
         return int(ceil(float(len(self.labels)) / self.batch_size))
