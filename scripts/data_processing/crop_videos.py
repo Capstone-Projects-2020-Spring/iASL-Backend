@@ -7,6 +7,7 @@
 
 import json
 import os
+import sys
 
 #Function to run batch command using FFMPEG to trim video based on start, end parameters
 def crop(start, end, infile, outfile):
@@ -15,7 +16,7 @@ def crop(start, end, infile, outfile):
     os.system(str)
     
 #Open Microsoft JSON to data set
-with open('MSASL_train.json', 'r') as f:
+with open(sys.argv[1], 'r') as f:
     dataset=json.load(f)
 
 #Get the video IDs that are used as filenames in the other directory
