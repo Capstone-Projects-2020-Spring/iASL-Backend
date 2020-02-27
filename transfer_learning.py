@@ -5,6 +5,7 @@ parser = argparse.argumentParser()
 parser.addArgument("-n", "--newdata", help="Specify the name of the new dataset")
 # Example: python3 transfer_learning.py -n new_dataset
 
+# Check whether the user entered a dataset; exit if no dataset entered
 if (args.newdata == None)
   print("Error: No new dataset specified")
   sys.exit()
