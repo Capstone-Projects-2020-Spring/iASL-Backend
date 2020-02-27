@@ -73,8 +73,6 @@ def crop(start, end, infile, outfile, raw_odir, clean_odir, label):
     cmd = "ffmpeg -i " + in_path + MP4_EXT + " -ss " \
           + start + " -to " + end + " -c copy " + out_path
 
-    #    print(cmd)
-
     # execute the command
     #
     return os.system(cmd)
@@ -228,6 +226,10 @@ def main(argv):
             # crop and save to the clean odir
             #
             crop(str(start), str(end), name, fname, raw_odir, clean_odir, label)
+
+        # remove the temporary file
+        #
+        os.system('rm ' + os.path.join(raw_odir, name) + MP4_EXT)
 
     # display status
     #

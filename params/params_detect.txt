@@ -1,0 +1,42 @@
+# file: $iASL_PARAMS/params_detect.txt
+#
+# Defines the parameters for the decoding script
+#
+
+#------------------------------------------------------------------------------
+#
+# Section 0: Class Mapping
+#
+#------------------------------------------------------------------------------
+
+MAP {
+
+ # define each class
+ #
+ 0 = A
+ 1 = B
+ 2 = C
+ 3 = D
+ 4 = E
+ 5 = F
+ 6 = nothing
+}
+
+#------------------------------------------------------------------------------
+#
+# Section 1: Decode Values 
+#
+#------------------------------------------------------------------------------
+
+DECODE_VALUES {
+
+ # set output model architeture name
+ #
+ mdl_dir = /p1_train/
+ mdl_name = model_architecture.json
+ wgt_name = weights-epoch-9.hdf5
+
+ # output file name
+ #
+ ofile = decode.hyp
+}
