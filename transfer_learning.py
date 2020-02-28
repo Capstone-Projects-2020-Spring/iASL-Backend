@@ -6,9 +6,14 @@ parser.addArgument("-n", "--newdata", help="Specify the name of the new dataset"
 parser.addArgument("-w", "--weights", help="Specify the file containing the weights and biases")
 # Example: python3 transfer_learning.py -n new_dataset.bin -w weights.txt
 
-# Check whether the user entered a dataset; exit if no dataset entered
+# Check whether the user entered a dataset for training; exit if no dataset entered
 if (args.newdata == None)
   print("Error: No new dataset specified")
+  sys.exit()
+  
+# Check whether the user entered weights; exit if no weights entered
+if (args.weights == None)
+  print("Error: No weights specified")
   sys.exit()
 
 # Read in weights and biases
