@@ -1,4 +1,5 @@
 import argparse
+import numpy as np
 import sys
 
 parser = argparse.argumentParser()
@@ -17,6 +18,8 @@ if (args.weights == None)
   sys.exit()
 
 # Read in weights and biases
+weights[][] = args.weights
+w = np.matrix(weights)
 
 # Multiply weights and biases by W = 0.7
 
