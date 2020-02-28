@@ -3,7 +3,8 @@ import sys
 
 parser = argparse.argumentParser()
 parser.addArgument("-n", "--newdata", help="Specify the name of the new dataset")
-# Example: python3 transfer_learning.py -n new_dataset
+parser.addArgument("-w", "--weights", help="Specify the file containing the weights and biases")
+# Example: python3 transfer_learning.py -n new_dataset.bin -w weights.txt
 
 # Check whether the user entered a dataset; exit if no dataset entered
 if (args.newdata == None)
