@@ -34,5 +34,6 @@ for i in range(np.size(w, 0)):
 newdata[] = args.newdata
 
 # Performing training on the new data, updating the above weights and biases
+epochs = 5
 
 # Save the updated weights and biases
