@@ -31,6 +31,7 @@ for i in range(np.size(w, 0)):
     w[i][j] *= 0.7
 
 # Read in new data to train
+newdata[] = args.newdata
 
 # Performing training on the new data, updating the above weights and biases
 
