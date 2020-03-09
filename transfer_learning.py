@@ -36,6 +36,7 @@ newdata[] = args.newdata
 '''Perform training on the new data, updating the above weights and biases'''
 # Note: Using some code from scripts/train.py (by @TarekE-dev)
 epochs = 5
+batch_size = 16
 
 files = newdata.get_flist(flist)
 labels = newdata.get_lines(anno)
