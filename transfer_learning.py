@@ -40,7 +40,7 @@ epochs = 5
 files = newdata.get_flist(flist)
 labels = newdata.get_lines(anno)
 
-# Split the dataset randomly
+# Randomly split the dataset
 temp_zipped = list(zip(files, labels))
 random.shuffle(temp_zipped)
 files, labels = zip(*temp_zipped)
