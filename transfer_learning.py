@@ -33,7 +33,7 @@ for i in range(np.size(w, 0)):
 # Read in new data to train
 newdata[] = args.newdata
 
-'''Performing training on the new data, updating the above weights and biases'''
+'''Perform training on the new data, updating the above weights and biases'''
 # Note: Using some code from scripts/train.py (by @TarekE-dev)
 epochs = 5
 
