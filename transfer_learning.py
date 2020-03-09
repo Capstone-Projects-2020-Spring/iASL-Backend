@@ -44,5 +44,6 @@ labels = newdata.get_lines(anno)
 temp_zipped = list(zip(files, labels))
 random.shuffle(temp_zipped)
 files, labels = zip(*temp_zipped)
+split = float(train_values["tr_cv_split"])
 
 # Save the updated weights and biases
