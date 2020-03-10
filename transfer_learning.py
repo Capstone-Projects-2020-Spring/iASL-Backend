@@ -47,4 +47,30 @@ random.shuffle(temp_zipped)
 files, labels = zip(*temp_zipped)
 split = float(train_values["tr_cv_split"])
 
+tmp_weights = os.path.join(odir, TEMP_WEIGHT_FILE)
+checkpoint = ModelCheckpoint(tmp_weights)
+
+# Split the files
+X_train = files[:int(split * len(files))]
+X_test = labels[:int(split * len(labels))]
+Y_train = files[int(split * len(files)):]
+Y_test = labels[int(split * len(labels)):]
+
+# Define the model (same as in scripts/train.py)
+model = Sequential()
+model.add(Conv2D(32, kernel_size = (3, 3), strides = (1,1), activation='relu', \
+                 input_shape=(200, 200, 1)))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(BatchNormalization())
+model.add(Conv2D(64, kernel_size = (3, 3), strides = (2,2), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(BatchNormalization())
+model.add(Conv2D(32, kernel_size = (3, 3), strides = (2,2), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(BatchNormalization())
+model.add(Flatten())
+model.add(Dense(1024, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(tr_dat_obj.num_classes, activation = 'softmax'))
+
 # Save the updated weights and biases
