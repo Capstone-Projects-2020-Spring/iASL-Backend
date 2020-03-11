@@ -73,4 +73,6 @@ model.add(Dense(1024, activation='relu'))
 model.add(Dropout(0.3))
 model.add(Dense(tr_dat_obj.num_classes, activation = 'softmax'))
 
+adam_opt = Adam(lr=float(train_values["learning_rate"]))  # Optimizer (set to optimize the learning rate)
+
 # Save the updated weights and biases
