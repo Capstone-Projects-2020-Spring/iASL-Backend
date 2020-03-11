@@ -75,4 +75,12 @@ model.add(Dense(tr_dat_obj.num_classes, activation = 'softmax'))
 
 adam_opt = Adam(lr=float(train_values["learning_rate"]))  # Optimizer (set to optimize the learning rate)
 
+model.compile(loss='categorical_crossentropy', optimizer= adam_opt, \
+                  metrics=['accuracy'])
+
+model.fit_generator(generator=tr_dat_obj, epochs=epochs, verbose=1, max_queue_size=10, \
+                        workers=6, shuffle=False, callbacks=[checkpoint], validation_data=cv_dat_obj)
+
+model_json = model.to_json()
+
 # Save the updated weights and biases
