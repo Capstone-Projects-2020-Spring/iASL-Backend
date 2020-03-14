@@ -83,4 +83,8 @@ model.fit_generator(generator=tr_dat_obj, epochs=epochs, verbose=1, max_queue_si
 
 model_json = model.to_json()
 
-# Save the updated weights and biases
+# Save the model
+with open(os.path.join(odir, train_values['mdl_name']), "w") as json_arch:
+        json_arch.write(model_json)
+
+model.save(os.path.join(odir, train_values['wgt_name']), overwrite=True)
