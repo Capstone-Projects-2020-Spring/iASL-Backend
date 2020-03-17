@@ -1,0 +1,27 @@
+on: [push]
+
+jobs:
+  deploy_job:
+    runs-on: ubuntu-latest
+    name: Send Model to Server
+    steps:
+      # To use this repository's private action, you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+
+     # Runs a set of commands using the runners shell
+      - name: Cat_Model
+        run: |
+          cd output/p1_train
+          cat model.* > model.tflite
+          zip -r model.tflite.zip model.tflite labels.txt
+      - name: deploy file to server
+        uses: wlixcc/SFTP-Deploy-Action@v1.0
+        with:
+          username: 'ianapplebaum'
+          server: '${{ secrets.SERVER_IP }}'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          local_path: './model.tflite.zip'
+          remote_path: '~/public_html/capstone/'
+          args: '-o ConnectTimeout=5'
+        
