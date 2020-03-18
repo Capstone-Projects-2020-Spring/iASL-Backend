@@ -360,40 +360,112 @@ def main(argv):
         keypress = cv2.waitKey(1) & 0xFF
         if k == 27: break
 
+        # resize the input to 200x200
+        #
         roi = cv2.resize(roi, (200, 200), interpolation = cv2.INTER_AREA)[:, :, ::-1]
+
+        # preprocess the input (mean_subtraction, etc.)
+        #
         roi = preprocess_input(roi)
+
+        # put the frame in the queue
+        #
         frame_q.put(roi)
+        
         try:
             scores = score_q.get()
-            max_ind = np.argmax(scores)
-            max_score = np.max(scores)
-            if len(top_k_preds) < K:
-                top_k_preds.append((max_ind, max_score))
-            elif len(top_k_preds) == K:
-                top_k_preds.pop(0)
-                top_k_preds.append((max_ind, max_score))
-            if len(set([x[0] for x in top_k_preds])) != 1:
-                continue
-            if float(sum([x[1] for x in top_k_preds])) / float(K) < THRESH:
-                continue
-            if mapping[max_ind] == 'del':
-                is_del = True
-                num_del += 1
-            else:
-                is_del = False
-                num_del = 0
-            if(len(letters) == 0):
-                letters = add_letter(letters, mapping[max_ind])
-            elif(mapping[max_ind] == letters[-1] or (mapping[max_ind] == 'space' and letters[-1] == ' ' ) or (num_del > 1)):
-                same_letter += 1
-                if(same_letter == 15 or (is_del and same_letter == 5)):
-                    letters = add_letter(letters, mapping[max_ind])
-                    same_letter = 0                    
-            else:
-                same_letter = 0
-                letters = add_letter(letters, mapping[max_ind])
         except queue.Empty:
             continue            
+
+        # get the index of the max confidence
+        #
+        max_ind = np.argmax(scores)
+
+        # get the max confidence
+        #
+        max_score = np.max(scores)
+
+        # if we didn't reach K predictions
+        #
+        if len(top_k_preds) < K:
+
+            # append to the list
+            #
+            top_k_preds.append((max_ind, max_score))
+
+        # if we reached K predictions
+        #
+        elif len(top_k_preds) == K:
+
+            # shift buffer to the left and append
+            #
+            top_k_preds.pop(0)
+            top_k_preds.append((max_ind, max_score))
+
+        # ensure that there is only 1 unique letter
+        #
+        if len(set([x[0] for x in top_k_preds])) != 1:
+            continue
+
+        # ensure that the confidence for the letter is at least THRESH
+        #
+        if float(sum([x[1] for x in top_k_preds])) / float(K) < THRESH:
+            continue
+
+        # keep track if this is a deletion
+        #
+        if mapping[max_ind] == 'del':
+            is_del = True
+            num_del += 1
+
+        # this is not a deletion
+        #
+        else:
+            is_del = False
+            num_del = 0
+
+        # if we have not added any letters
+        #
+        if(len(letters) == 0):
+
+            # add the new letter
+            #
+            letters = add_letter(letters, mapping[max_ind])
+
+        # if this letter is the same as the last letter
+        #
+        elif(mapping[max_ind] == letters[-1] or (mapping[max_ind] == 'space' and letters[-1] == ' ' ) or (num_del > 1)):
+
+            # increment the occurence
+            #
+            same_letter += 1
+
+            # if we hit a threshold (faster thresh achieved with del to speed up)
+            #
+            if(same_letter == 15 or (is_del and same_letter == 5)):
+
+                # add the letter
+                #
+                letters = add_letter(letters, mapping[max_ind])
+
+                # reset the same letter
+                #
+                same_letter = 0                    
+
+        # if this is a new letter
+        #
+        else:
+
+            # this is not the same letter
+            #
+            same_letter = 0
+
+            # add the new letter
+            #
+            letters = add_letter(letters, mapping[max_ind])
+
+        # display the letters
+        #
         show_statistics(letters)            
 
     # exit gracefully
