@@ -11,9 +11,9 @@ config = tf.ConfigProto(intra_op_parallelism_threads=NUM_PARALLEL_EXEC_UNITS, in
 os.environ["OMP_NUM_THREADS"] = "NUM_PARALLEL_EXEC_UNITS"
 os.environ["KMP_BLOCKTIME"] = "1"
 os.environ["KMP_SETTINGS"] = "TRUE"
-os.environ["KMP_AFFINITY"]= "granularity=fine,verbose,compact,1,0"
+os.environ["KMP_AFFINITY"] = "granularity=fine,verbose,compact,1,0"
 
-os.environ["CUDA_VISIBLE_DEVICES"]='1'
+os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
 parser = argparse.argumentParser()
 parser.addArgument("-n", "--newdata", help="Specify the name of the new dataset")
