@@ -13,6 +13,8 @@ os.environ["KMP_BLOCKTIME"] = "1"
 os.environ["KMP_SETTINGS"] = "TRUE"
 os.environ["KMP_AFFINITY"]= "granularity=fine,verbose,compact,1,0"
 
+os.environ["CUDA_VISIBLE_DEVICES"]='1'
+
 parser = argparse.argumentParser()
 parser.addArgument("-n", "--newdata", help="Specify the name of the new dataset")
 parser.addArgument("-w", "--weights", help="Specify the file containing the weights and biases")
