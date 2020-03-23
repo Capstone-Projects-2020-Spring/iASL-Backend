@@ -22,8 +22,10 @@ from math import ceil
 # import third party modules
 #
 import numpy as np
-from PIL import Image, ExifTags
+import cv2
 from keras.utils import Sequence, to_categorical
+from keras.preprocessing import image
+from keras.applications.inception_v3 import preprocess_input
 
 
 #-----------------------------------------------------------------------------
@@ -38,6 +40,8 @@ DELIM_NEW_LINE = "\n"
 DELIM_FILE_SEP = "/"
 DELIM_ENV_VAR = "$"
 DELIM_NULL = ""
+FRAME_X = 50
+FRAME_Y = 50
 
 #-----------------------------------------------------------------------------
 #
@@ -45,6 +49,41 @@ DELIM_NULL = ""
 #
 #-----------------------------------------------------------------------------
 
+# function: get_vid
+#
+# arguments: ifile - path to file
+#
+# return: frames_new - preprocessed videos
+#
+# This function is used to return videos from the dataset
+#
+def get_vid(ifile):
+
+    # convert the np binary file to array and reshape
+    #
+    try:
+        frames = np.fromfile(ifile, dtype="uint8").reshape(40, 200, 200, 3)
+    except:
+        print("[%s]: '%s' could not be converted" % (sys.argv[0], ifile))
+        exit(-1)
+
+    # create empty array
+    #
+    frames_new = np.zeros((40, FRAME_Y, FRAME_X, 3))
+
+    # for each frame
+    #
+    for frame in range(frames.shape[0]):
+
+        # preprocess the input
+        #
+        frames_new[frame] = preprocess_input(cv2.resize(frames[frame], (FRAME_X, FRAME_Y), interpolation=cv2.INTER_AREA)[:, :, ::-1].astype("float32")).copy()
+
+    # return all the frames
+    #
+    return frames_new
+#
+# end of function
 
 # function: get_lines
 #
@@ -146,55 +185,20 @@ def get_flist(fname):
 # end of function
 
 
-# function: get_grayscale_img(ifile)
+# function: get_img(ifile)
 #
 # arguments: ifile - the path to the file
 #
 # return: np_img - array representation of the image
 #
-# This is the main function
+# This function reads an image and returns np array
 #
-def get_grayscale_img(ifile):
-
-    # try to open the file using PIL
-    #
-    try:
-        img_obj = Image.open(ifile)
-    except IOError as e:
-        print("[%s]: %s" % (sys,argv[0], e))
-        exit(-1)
-
-    # if we have EXIF data
-    #
-    if(img_obj._getexif() is not None):
-
-        # get all the exif tags
-        #
-        exif=dict((ExifTags.TAGS[k], v) for k, v in img_obj._getexif().items() if k in ExifTags.TAGS)
-
-        # rotate if it has been auto rotated
-        #
-        if   exif['Orientation'] == 3 : 
-            img_obj=img_obj.rotate(180, expand=True)
-        elif exif['Orientation'] == 6 : 
-            img_obj=img_obj.rotate(270, expand=True)
-        elif exif['Orientation'] == 8 : 
-            img_obj=img_obj.rotate(90, expand=True)
-
-    # convert the image to grayscale
-    #
-    img_obj = img_obj.convert('L').resize((200, 200))
-
-    # load the image
-    #
-    img_obj.load()
-
-    # convert to a numpy array and reshape
-    #
-    np_img = np.asarray(img_obj, dtype="int32").reshape(200, 200, 1)
-
-    # exit gracefully
-    #
+def get_img(ifile):
+    img = image.load_img(ifile, target_size=(FRAME_Y, FRAME_X))
+    x = image.img_to_array(img)
+    np_img = x.astype("float32", copy=False)
+    np_img /= 127.5
+    np_img -= 1.
     return np_img
 #
 # end of function
@@ -221,7 +225,7 @@ class DataGenerator(Sequence):
     #
     # This is the constructor for the class
     #
-    def __init__(self, flist, labels, batch_size, class_mapping):
+    def __init__(self, flist, labels, batch_size, class_mapping, is_vid):
 
         # initialize the object
         #
@@ -230,6 +234,7 @@ class DataGenerator(Sequence):
         self.labels = labels
         self.batch_size = batch_size
         self.num_classes = len(self.lbl_mapping)
+        self.is_vid = is_vid
         self.init_mapping()
     #
     # end of function
@@ -325,7 +330,10 @@ class DataGenerator(Sequence):
 
             # read the image and append it to the inputs
             #
-            inputs.append(get_grayscale_img(ifile).copy())
+            if self.is_vid:
+                inputs.append(get_vid(ifile).copy())
+            else:
+                inputs.append(get_img(ifile).copy())
 
             # add the id label to list of labels
             #

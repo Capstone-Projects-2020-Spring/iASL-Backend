@@ -20,12 +20,12 @@ import random
 # import keras/tf modules
 #
 from keras import backend as K
-#K.tensorflow_backend._get_available_gpus()
 from keras.models import Sequential
-from keras.layers import Conv2D, Activation, BatchNormalization
-from keras.layers import MaxPooling2D, Dense, Flatten, Dropout
-from keras.optimizers import Adam
+from keras.layers import Input, GlobalAveragePooling3D
+from keras.layers import Dense, Flatten, Dropout
 from keras.callbacks import ModelCheckpoint
+from keras.models import Model
+from i3d import *
 
 # import custom modules
 #
@@ -146,35 +146,26 @@ def main(argv):
 
     # create two generator objects (one for train, one for cv)
     #
-    tr_dat_obj = cd.DataGenerator(X_train, X_test, batch_size, class_mapping)
-    cv_dat_obj = cd.DataGenerator(Y_train, Y_test, batch_size, class_mapping)
+    tr_dat_obj = cd.DataGenerator(X_train, X_test, batch_size, class_mapping, eval(train_values['is_vid']))
+    cv_dat_obj = cd.DataGenerator(Y_train, Y_test, batch_size, class_mapping, eval(train_values['is_vid']))
 
     # define the model architecture (this changes a lot...)
     #
-    model = Sequential()
-    model.add(Conv2D(32, kernel_size = (3, 3), strides = (1,1), activation='relu', \
-                     input_shape=(200, 200, 1)))
-    model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(64, kernel_size = (3, 3), strides = (2,2), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(32, kernel_size = (3, 3), strides = (2,2), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(BatchNormalization())
-    model.add(Flatten())
-    model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.3))
-    model.add(Dense(tr_dat_obj.num_classes, activation = 'softmax'))
+    inp = Input(shape=(40, 200, 200, 3))
+    base_model = Inception_Inflated3d(include_top=False, weights='rgb_imagenet_and_kinetics', input_tensor=inp, classes=tr_dat_obj.num_classes)
+    x = base_model.output
+    x = GlobalAveragePooling3D()(x)
+    x = Dense(1024, activation='relu')(x)
+    out = Dense(tr_dat_obj.num_classes, activation='softmax')(x)
+    for layer in base_model.layers:
+        layer.trainable = False
+        if isinstance(layer, keras.layers.normalization.BatchNormalization):
+            layer.trainable = True
 
-    # define the optimizer
+    # connect the input and output layers
     #
-    adam_opt = Adam(lr=float(train_values["learning_rate"]))
-
-    # use categorical crossentropy to classify labels
-    #
-    model.compile(loss='categorical_crossentropy', optimizer= adam_opt, \
-                  metrics=['accuracy'])
+    model = Model(inputs=base_model.input, outputs=out)
+    model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
 
     # fit the train/cv generators to the model
     #
