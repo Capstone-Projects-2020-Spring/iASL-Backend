@@ -20,13 +20,10 @@ def preprocess(inp):
     inp -= 1
     return inp
 
-address = 'http://localhost:5000'
+address = 'http://localhost:8080'
 test_url = address + '/predict'
 npy_file = sys.argv[1]
 frames = np.fromfile(npy_file, np.uint8).reshape(40, 150, 150, 3)
 frames = np.array([preprocess(frame) for frame in frames])
 response = requests.post(test_url, data=frames.tostring())
 print(response.text)
-
-scores = eval(response.text)['scores']
-print(MAP[scores.index(max(scores))], max(scores))

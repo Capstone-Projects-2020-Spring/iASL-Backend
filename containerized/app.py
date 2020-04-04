@@ -48,6 +48,19 @@ WIDTH = 150
 HEIGHT = 150
 NUM_CHANNELS = 3
 
+# define the word map
+#
+MAP = {0:'yes',
+    1:'again',
+    2:'boy',
+    3:'girl',
+    4:'no',
+    5:'ok',
+    6:'help',
+    7:'hello',
+    8:'finish',
+    9:'me'}
+
 #-----------------------------------------------------------------------------
 #
 # the main program is here
@@ -83,6 +96,7 @@ def predict():
     # get the output of the model
     #
     scores = model.predict(np_vid)[0].tolist()
+    scores = {MAP[index]:scores[index] for index in range(len(scores))}
 
     # construct a response
     #

@@ -3,5 +3,4 @@ COPY . /server
 RUN pip install -r /server/requirements.txt
 EXPOSE 8080
 WORKDIR /server
-RUN ls -l
-ENTRYPOINT ["flask", "run"]
+CMD flask run -h 0.0.0.0 -p 8080
