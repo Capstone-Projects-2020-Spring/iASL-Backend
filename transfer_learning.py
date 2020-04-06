@@ -17,6 +17,7 @@ os.environ["KMP_AFFINITY"] = "granularity=fine,verbose,compact,1,0"
 # Experimental code for GPU support
 os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
+# Setup command-line arguments
 parser = argparse.argumentParser()
 parser.addArgument("-n", "--newdata", help="Specify the name of the new dataset")
 parser.addArgument("-w", "--weights", help="Specify the file containing the weights and biases")
