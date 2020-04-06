@@ -7,12 +7,14 @@ import numpy as np
 import os
 import sys
 
+# Experimental code for multithreading
 config = tf.ConfigProto(intra_op_parallelism_threads=NUM_PARALLEL_EXEC_UNITS, inter_op_parallelism_threads=4, allow_soft_placement=True, device_count = {'CPU': NUM_PARALLEL_EXEC_UNITS})
 os.environ["OMP_NUM_THREADS"] = "NUM_PARALLEL_EXEC_UNITS"
 os.environ["KMP_BLOCKTIME"] = "1"
 os.environ["KMP_SETTINGS"] = "TRUE"
 os.environ["KMP_AFFINITY"] = "granularity=fine,verbose,compact,1,0"
 
+# Experimental code for GPU support
 os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
 parser = argparse.argumentParser()
