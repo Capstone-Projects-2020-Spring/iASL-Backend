@@ -38,9 +38,10 @@ weights[][] = args.weights
 w = np.matrix(weights)
 
 # Multiply weights and biases by W = 0.7
+W = 0.7
 for i in range(np.size(w, 0)):
   for j in range(np.size(w, 1)):
-    w[i][j] *= 0.7
+    w[i][j] *= W
 
 # Read in new data to train
 newdata[] = args.newdata
