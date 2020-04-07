@@ -17,6 +17,7 @@
 import os
 import sys
 import random
+import base64
 
 # import keras/tf modules
 #
@@ -79,6 +80,13 @@ model.load_weights(os.path.join(MDL_DIR, MDL_WGT))
 #
 app = Flask(__name__)
 
+
+def preprocess(inp):
+    inp = inp[:,:,::-1].astype(np.float32)
+    inp /= 127.5
+    inp -= 1
+    return inp
+
 # route the http post to this method
 #
 @app.route('/predict', methods=['POST'])
@@ -87,21 +95,22 @@ def predict():
     # get the request
     #
     req = request
+    np_buff = np.frombuffer(base64.b64decode(req.form.get('vid_stuff')), np.uint8)
+    print(np.max(np_buff), np.min(np_buff))
 
     # convert string data to np array
     #
-    np_vid = np.fromstring(req.data, np.float32)
-    np_vid = np_vid.reshape(1, NUM_FRAMES, HEIGHT, WIDTH, NUM_CHANNELS)
+    np_vid = np_buff.reshape(1, NUM_FRAMES, HEIGHT, WIDTH, NUM_CHANNELS)
+    np_vid = np.array([preprocess(frame) for frame in np_vid])
 
     # get the output of the model
     #
     scores = model.predict(np_vid)[0].tolist()
-    scores = {MAP[index]:scores[index] for index in range(len(scores))}
 
     # construct a response
     #
     response = jsonpickle.encode({'scores':scores})
-
+    
     # return a Response
     #
     return Response(response=response, status=200, mimetype="application/json")
