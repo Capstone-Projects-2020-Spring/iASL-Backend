@@ -1,3 +1,4 @@
+# Imports
 import scipy.io as sio
 import numpy as np
 import os
@@ -10,16 +11,13 @@ import random
 import shutil as sh
 from shutil import copyfile
 import zipfile
-
 import csv
-
 
 def save_csv(csv_path, csv_content):
     with open(csv_path, 'w') as csvfile:
         wr = csv.writer(csvfile)
         for i in range(len(csv_content)):
             wr.writerow(csv_content[i])
-
 
 def get_bbox_visualize(base_path, dir):
     image_path_array = []
