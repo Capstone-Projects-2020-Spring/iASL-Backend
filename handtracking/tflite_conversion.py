@@ -8,16 +8,19 @@
 
 # Source: https://www.tensorflow.org/lite/guide/get_started
 
+# Imports
 import argparse
 import sys
 import tensorflow as tf
 
+# Setup command-line arguments
 parser = argparse.argumentParser()
 parser.addArgument("-d", "--directory", "Name of directory containing the saved TensorFlow model to convert")
 
+# Check whether a directory was specified; exit if none was
 if args.directory == None:
   print("Error: No directory specified")
-  sys.exit
+  sys.exit()
 
 converter = tf.lite.TFLiteConverter.from_saved_model(args.directory)
 tflite_model = converter.convert()
