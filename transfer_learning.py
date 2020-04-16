@@ -18,9 +18,11 @@ os.environ["KMP_AFFINITY"] = "granularity=fine,verbose,compact,1,0"
 os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
 # Setup command-line arguments
-parser = argparse.argumentParser()
-parser.addArgument("-n", "--newdata", help="Specify the name of the new dataset")
-parser.addArgument("-w", "--weights", help="Specify the file containing the weights and biases")
+parser = argparse.ArgumentParser()
+parser.add_argument("-n", "--newdata", help="Specify the name of the new dataset")
+parser.add_argument("-w", "--weights", help="Specify the file containing the weights and biases")
+args = parser.parse_args()
+
 # Example: python3 transfer_learning.py -n new_dataset.bin -w weights.txt
 
 # Check whether the user entered a dataset for training; exit if no dataset entered
