@@ -14,8 +14,9 @@ import sys
 import tensorflow as tf
 
 # Setup command-line arguments
-parser = argparse.argumentParser()
-parser.addArgument("-d", "--directory", "Name of directory containing the saved TensorFlow model to convert")
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--directory", "Name of directory containing the saved TensorFlow model to convert")
+args = parser.parse_args()
 
 # Check whether a directory was specified; exit if none was
 if args.directory == None:
