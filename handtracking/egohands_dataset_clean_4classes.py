@@ -13,6 +13,7 @@ from shutil import copyfile
 import zipfile
 import csv
 
+# Save CSV
 def save_csv(csv_path, csv_content):
     with open(csv_path, 'w') as csvfile:
         wr = csv.writer(csvfile)
@@ -216,6 +217,8 @@ def extract_folder(dataset_path):
 
 def download_egohands_dataset(dataset_url, dataset_path):
     is_downloaded = os.path.exists(dataset_path)
+    
+    # If path to dataset_path does not exist
     if not is_downloaded:
         print(
             "> downloading egohands dataset. This may take a while (1.3GB, say 3-5mins). Coffee break?")
@@ -224,6 +227,7 @@ def download_egohands_dataset(dataset_url, dataset_path):
         print("> download complete")
         extract_folder(dataset_path);
 
+    # If the path exists
     else:
         extract_folder(dataset_path)
 
