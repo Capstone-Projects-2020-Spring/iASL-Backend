@@ -23,7 +23,7 @@ import cv2
 # import keras/tf modules
 #
 import tensorflow as tf
-from tensorflow.keras.models import model_from_json
+from keras.models import model_from_json
 
 # import image processing tools
 #
@@ -43,8 +43,8 @@ import jsonpickle
 # define model vars
 #
 MDL_DIR = os.path.join(os.getcwd(), "mdl_dir")
-MDL_JSON = "vid_model_architecture.json"
-MDL_WGT = "vid_weights-epoch.hdf5"
+MDL_JSON = "model_architecture.json"
+MDL_WGT = "weights-epoch-6.hdf5"
 NUM_FRAMES = 40
 WIDTH = 150
 HEIGHT = 150
@@ -65,6 +65,10 @@ MAP = {0:'yes',
     7:'hello',
     8:'finish',
     9:'me'}
+with open("labels.txt", "r") as fp:
+    LABELS = fp.read().split()
+print(LABELS)
+
 
 #-----------------------------------------------------------------------------
 #
@@ -74,19 +78,19 @@ MAP = {0:'yes',
 
 # # load the model
 # #
-# model_f_cont = open(os.path.join(MDL_DIR, MDL_JSON), "r")
-# model = model_f_cont.read()
-# model = model_from_json(model)
-# model_f_cont.close()
-# model.load_weights(os.path.join(MDL_DIR, MDL_WGT))
-
+model_f_cont = open(os.path.join(MDL_DIR, MDL_JSON), "r")
+model = model_f_cont.read()
+model = model_from_json(model)
+model_f_cont.close()
+model.load_weights(os.path.join(MDL_DIR, MDL_WGT))
+model._make_predict_function()
 # define the application
 #
 app = Flask(__name__)
 
 
 def preprocess(inp):
-    inp = inp[:,:,::-1].astype(np.float32)
+    inp = inp.astype(np.float32)
     inp /= 127.5
     inp -= 1
     return inp
@@ -132,11 +136,17 @@ def predict_img():
 
     np_buff = np.frombuffer(base64.b64decode(req.form.get('img')), np.uint8)
     global INDEX
-    
     # convert string data to np array
     #
-    np_img = np_buff.reshape(IM_HEIGHT, IM_WIDTH, NUM_CHANNELS)[:,:,::-1]
-    cv2.imwrite('images/image-{}.jpg'.format(str(INDEX).zfill(3)), np_img)
+    np_img = np_buff.reshape(IM_HEIGHT, IM_WIDTH, NUM_CHANNELS)
+    input_img = preprocess(np_img).reshape(1, IM_HEIGHT, IM_WIDTH, NUM_CHANNELS)
+    output_data = model.predict(input_img)[0].tolist()
+    print("output data", output_data)
+    lbl = LABELS[int(np.argmax(output_data))]
+    ofile = lbl + "/image-{}.jpg".format(str(INDEX).zfill(3))
+    if not os.path.exists(lbl):
+        os.makedirs(lbl)        
+    cv2.imwrite(ofile, np_img)
     INDEX += 1
     return Response(response="", status=200, mimetype="application/json")
 
