@@ -49,6 +49,9 @@ WIDTH = 150
 HEIGHT = 150
 NUM_CHANNELS = 3
 
+IM_WIDTH = 200
+IM_HEIGHT = 200
+
 # define the word map
 #
 MAP = {0:'yes',
@@ -96,7 +99,6 @@ def predict():
     #
     req = request
     np_buff = np.frombuffer(base64.b64decode(req.form.get('vid_stuff')), np.uint8)
-    print(np.max(np_buff), np.min(np_buff))
 
     # convert string data to np array
     #
@@ -117,6 +119,22 @@ def predict():
 #
 # end of function
 
+
+# route the http post to this method
+#
+@app.route('/predict_img', methods=['POST'])
+def predict_img():
+
+    # get the request
+    #
+    req = request
+    np_buff = np.frombuffer(base64.b64decode(req.form.get('img')), np.uint8)
+
+    # convert string data to np array
+    #
+    np_img = np_buff.reshape(IM_HEIGHT, IM_WIDTH, NUM_CHANNELS)[:,:,::-1]
+    cv2.imsave('image.jpg', np_img)
+    return Response(response="", status=200, mimetype="application/json")
 
 # start flask app
 #
