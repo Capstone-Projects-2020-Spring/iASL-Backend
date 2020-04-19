@@ -49,7 +49,7 @@ NUM_FRAMES = 40
 WIDTH = 150
 HEIGHT = 150
 NUM_CHANNELS = 3
-
+INDEX = 0
 IM_WIDTH = 200
 IM_HEIGHT = 200
 
@@ -129,12 +129,15 @@ def predict_img():
     # get the request
     #
     req = request
-    np_buff = np.frombuffer(base64.b64decode(req.form.get('img')), np.uint8)
 
+    np_buff = np.frombuffer(base64.b64decode(req.form.get('img')), np.uint8)
+    global INDEX
+    
     # convert string data to np array
     #
     np_img = np_buff.reshape(IM_HEIGHT, IM_WIDTH, NUM_CHANNELS)[:,:,::-1]
-    cv2.imwrite('image.jpg', np_img)
+    cv2.imwrite('images/image-{}.jpg'.format(str(INDEX).zfill(3)), np_img)
+    INDEX += 1
     return Response(response="", status=200, mimetype="application/json")
 
 # start flask app
