@@ -18,6 +18,7 @@ import os
 import sys
 import random
 import base64
+import cv2
 
 # import keras/tf modules
 #
@@ -71,13 +72,13 @@ MAP = {0:'yes',
 #
 #-----------------------------------------------------------------------------
 
-# load the model
-#
-model_f_cont = open(os.path.join(MDL_DIR, MDL_JSON), "r")
-model = model_f_cont.read()
-model = model_from_json(model)
-model_f_cont.close()
-model.load_weights(os.path.join(MDL_DIR, MDL_WGT))
+# # load the model
+# #
+# model_f_cont = open(os.path.join(MDL_DIR, MDL_JSON), "r")
+# model = model_f_cont.read()
+# model = model_from_json(model)
+# model_f_cont.close()
+# model.load_weights(os.path.join(MDL_DIR, MDL_WGT))
 
 # define the application
 #
@@ -133,7 +134,7 @@ def predict_img():
     # convert string data to np array
     #
     np_img = np_buff.reshape(IM_HEIGHT, IM_WIDTH, NUM_CHANNELS)[:,:,::-1]
-    cv2.imsave('image.jpg', np_img)
+    cv2.imwrite('image.jpg', np_img)
     return Response(response="", status=200, mimetype="application/json")
 
 # start flask app
