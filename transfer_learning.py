@@ -91,6 +91,7 @@ model.add(Dense(tr_dat_obj.num_classes, activation = 'softmax'))
 
 adam_opt = Adam(lr=float(train_values["learning_rate"]))  # Optimizer (set to optimize the learning rate)
 
+# Compile the model
 model.compile(loss='categorical_crossentropy', optimizer= adam_opt, \
                   metrics=['accuracy'])
 
