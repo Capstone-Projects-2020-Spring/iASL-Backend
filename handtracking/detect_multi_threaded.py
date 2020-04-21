@@ -9,6 +9,7 @@ from utils.detector_utils import WebcamVideoStream
 import datetime
 import argparse
 
+# Initialize variables
 frame_processed = 0
 score_thresh = 0.2
 
@@ -102,6 +103,7 @@ if __name__ == '__main__':
         help='Size of the queue.')
     args = parser.parse_args()
 
+    # Initialize quues
     input_q = Queue(maxsize=args.queue_size)
     output_q = Queue(maxsize=args.queue_size)
 
