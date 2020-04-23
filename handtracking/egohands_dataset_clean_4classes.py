@@ -22,9 +22,9 @@ def save_csv(csv_path, csv_content):
 
 def get_bbox_visualize(base_path, dir):
     image_path_array = []
-    for root, dirs, filenames in os.walk(base_path + dir):
+    for root, dirs, filenames in os.walk(base_path + dir):  # Go through the files
         for f in filenames:
-            if (f.split(".")[1] == "jpg"):
+            if (f.split(".")[1] == "jpg"):  # If it's a picture
                 img_path = base_path + dir + "/" + f
                 image_path_array.append(img_path)
 
