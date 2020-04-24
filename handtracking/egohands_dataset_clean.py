@@ -13,6 +13,7 @@ from shutil import copyfile
 import zipfile
 import csv
 
+# Save CSV file
 def save_csv(csv_path, csv_content):
     with open(csv_path, 'w') as csvfile:
         wr = csv.writer(csvfile)
@@ -21,9 +22,9 @@ def save_csv(csv_path, csv_content):
 
 def get_bbox_visualize(base_path, dir):
     image_path_array = []
-    for root, dirs, filenames in os.walk(base_path + dir):
+    for root, dirs, filenames in os.walk(base_path + dir):  # Go through the files
         for f in filenames:
-            if(f.split(".")[1] == "jpg"):
+            if(f.split(".")[1] == "jpg"):   # If the file is a JPG file
                 img_path = base_path + dir + "/" + f
                 image_path_array.append(img_path)
 
