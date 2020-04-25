@@ -44,7 +44,7 @@ import cv2
 #
 MDL_DIR = os.path.join(os.getcwd(), "mdl_dir")
 MDL_JSON = "vid_model_architecture.json"
-MDL_WGT = "vid_weights-epoch.hdf5"
+MDL_WGT = "weights-epoch-8.hdf5"
 NUM_FRAMES = 40
 WIDTH = 50
 HEIGHT = 50
@@ -52,17 +52,60 @@ NUM_CHANNELS = 3
 
 # define the word map
 #
-MAP = {0:'yes',
-    1:'again',
-    2:'boy',
-    3:'girl',
-    4:'no',
-    5:'ok',
-    6:'help',
-    7:'hello',
-    8:'finish',
-    9:'me',
-    10:'nothing'}
+MAP = {0:'time',
+       1:'think',
+       2:'boy',
+       3:'in',
+       4:'link',
+       5:'angry',
+       6:'friend',
+       7:'then',
+       8:'language',
+       9:'girl',
+       10:'seperate',
+       11:'food',
+       12:'learn',
+       13:'familiar',
+       14:'for',
+       15:'late',
+       16:'sometimes',
+       17:'ask',
+       18:'yes',
+       19:'and',
+       20:'later',
+       21:'door',
+       22:'give',
+       23:'look',
+       24:'list',
+       25:'nothing',
+       26:'fingerspell',
+       27:'usa',
+       28:'why',
+       29:'which',
+       30:'tell',
+       31:'come',
+       32:'move',
+       33:'but',
+       34:'weekend',
+       35:'use',
+       36:'far',
+       37:'me',
+       38:'how',
+       39:'get',
+       40:'because',
+       41:'stay',
+       42:'good',
+       43:'some',
+       44:'ok',
+       45:'no',
+       46:'hello',
+       47:'finish',
+       48:'out',
+       49:'also',
+       50:'lab',
+       51:'again',
+       52:'help',
+       53:'they'}
 
 #-----------------------------------------------------------------------------
 #
