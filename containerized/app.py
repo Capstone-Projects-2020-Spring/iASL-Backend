@@ -32,6 +32,7 @@ import numpy as np
 #
 from flask import Flask, request, Response
 import jsonpickle
+import cv2
 
 #-----------------------------------------------------------------------------
 #
@@ -45,8 +46,8 @@ MDL_DIR = os.path.join(os.getcwd(), "mdl_dir")
 MDL_JSON = "vid_model_architecture.json"
 MDL_WGT = "vid_weights-epoch.hdf5"
 NUM_FRAMES = 40
-WIDTH = 150
-HEIGHT = 150
+WIDTH = 50
+HEIGHT = 50
 NUM_CHANNELS = 3
 
 # define the word map
@@ -60,7 +61,8 @@ MAP = {0:'yes',
     6:'help',
     7:'hello',
     8:'finish',
-    9:'me'}
+    9:'me',
+    10:'nothing'}
 
 #-----------------------------------------------------------------------------
 #
@@ -80,12 +82,15 @@ model.load_weights(os.path.join(MDL_DIR, MDL_WGT))
 #
 app = Flask(__name__)
 
-
 def preprocess(inp):
-    inp = inp[:,:,::-1].astype(np.float32)
+    inp = cv2.resize(inp, (150, 150), interpolation = cv2.INTER_AREA)
+    inp = inp.astype(np.float32)
     inp /= 127.5
     inp -= 1
     return inp
+#
+# end of function
+
 
 # route the http post to this method
 #
@@ -96,20 +101,19 @@ def predict():
     #
     req = request
     np_buff = np.frombuffer(base64.b64decode(req.form.get('vid_stuff')), np.uint8)
-    print(np.max(np_buff), np.min(np_buff))
-
+    
     # convert string data to np array
     #
-    np_vid = np_buff.reshape(1, NUM_FRAMES, HEIGHT, WIDTH, NUM_CHANNELS)
-    np_vid = np.array([preprocess(frame) for frame in np_vid])
+    np_vid = np_buff.reshape(NUM_FRAMES, WIDTH, HEIGHT, NUM_CHANNELS)
+    np_vid = np.expand_dims(np.array([preprocess(frame) for frame in np_vid]), axis=0)
 
     # get the output of the model
     #
-    scores = model.predict(np_vid)[0].tolist()
+    scores = {MAP[i]:score for i,score in enumerate(model.predict(np_vid)[0].tolist())}
 
     # construct a response
     #
-    response = jsonpickle.encode({'scores':scores})
+    response = jsonpickle.encode({'scores':scores})    
     
     # return a Response
     #
@@ -120,4 +124,4 @@ def predict():
 
 # start flask app
 #
-app.run(host="0.0.0.0", port=8080)
+app.run(host="0.0.0.0", port=8080, threaded=True)
