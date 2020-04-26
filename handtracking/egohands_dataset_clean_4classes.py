@@ -1,3 +1,4 @@
+# Imports
 import scipy.io as sio
 import numpy as np
 import os
@@ -10,22 +11,20 @@ import random
 import shutil as sh
 from shutil import copyfile
 import zipfile
-
 import csv
 
-
+# Save CSV
 def save_csv(csv_path, csv_content):
     with open(csv_path, 'w') as csvfile:
         wr = csv.writer(csvfile)
         for i in range(len(csv_content)):
             wr.writerow(csv_content[i])
 
-
 def get_bbox_visualize(base_path, dir):
     image_path_array = []
-    for root, dirs, filenames in os.walk(base_path + dir):
+    for root, dirs, filenames in os.walk(base_path + dir):  # Go through the files
         for f in filenames:
-            if (f.split(".")[1] == "jpg"):
+            if (f.split(".")[1] == "jpg"):  # If it's a picture
                 img_path = base_path + dir + "/" + f
                 image_path_array.append(img_path)
 
@@ -120,9 +119,7 @@ def create_directory(dir_path):
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
 
-
 # combine all individual csv files for each image into a single csv file per folder.
-
 
 def generate_label_files(image_dir):
     header = ['filename', 'width', 'height',
@@ -145,7 +142,6 @@ def generate_label_files(image_dir):
             save_csv(image_dir + dir + "/" + dir + "_labels.csv", csvholder)
             print("Saved label csv for ", dir, image_dir +
                   dir + "/" + dir + "_labels.csv")
-
 
 # Split data, copy to train/test folders
 def split_data_test_eval_train(image_dir):
@@ -183,7 +179,6 @@ def split_data_test_eval_train(image_dir):
         print("Train/test content generation complete!")
         generate_label_files("images/")
 
-
 def generate_csv_files(image_dir):
     for root, dirs, filenames in os.walk(image_dir):
         for dir in dirs:
@@ -191,7 +186,6 @@ def generate_csv_files(image_dir):
 
     print("CSV generation complete!\nGenerating train/test/eval folders")
     split_data_test_eval_train("egohands/_LABELLED_SAMPLES/")
-
 
 # rename image files so we can have them all in a train/test/eval folder.
 def rename_files(image_dir):
@@ -211,7 +205,6 @@ def rename_files(image_dir):
 
     generate_csv_files("egohands/_LABELLED_SAMPLES/")
 
-
 def extract_folder(dataset_path):
     print("Egohands dataset already downloaded.\nGenerating CSV files")
     if not os.path.exists("egohands"):
@@ -222,9 +215,10 @@ def extract_folder(dataset_path):
         zip_ref.close()
         rename_files("egohands/_LABELLED_SAMPLES/")
 
-
 def download_egohands_dataset(dataset_url, dataset_path):
     is_downloaded = os.path.exists(dataset_path)
+    
+    # If path to dataset_path does not exist
     if not is_downloaded:
         print(
             "> downloading egohands dataset. This may take a while (1.3GB, say 3-5mins). Coffee break?")
@@ -233,9 +227,9 @@ def download_egohands_dataset(dataset_url, dataset_path):
         print("> download complete")
         extract_folder(dataset_path);
 
+    # If the path exists
     else:
         extract_folder(dataset_path)
-
 
 EGOHANDS_DATASET_URL = "http://vision.soic.indiana.edu/egohands_files/egohands_data.zip"
 EGO_HANDS_FILE = "egohands_data.zip"

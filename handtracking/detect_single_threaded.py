@@ -1,3 +1,4 @@
+# Imports
 from utils import detector_utils as detector_utils
 import cv2
 import tensorflow as tf
@@ -8,6 +9,7 @@ detection_graph, sess = detector_utils.load_inference_graph()
 
 if __name__ == '__main__':
 
+    # Setup command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-sth',
@@ -82,6 +84,8 @@ if __name__ == '__main__':
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
         ret, image_np = cap.read()
         # image_np = cv2.flip(image_np, 1)
+        
+        # Attempt to convert the color to RGB; print an error message if unsuccessful
         try:
             image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
         except:
@@ -99,9 +103,9 @@ if __name__ == '__main__':
                                          scores, boxes, im_width, im_height,
                                          image_np)
 
-        # Calculate Frames per second (FPS)
+        # Calculate frames per second (FPS)
         num_frames += 1
-        elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
+        elapsed_time = (datetime.datetime.now() - start_time).total_seconds()   # Find the time elapsed
         fps = num_frames / elapsed_time
 
         if (args.display > 0):

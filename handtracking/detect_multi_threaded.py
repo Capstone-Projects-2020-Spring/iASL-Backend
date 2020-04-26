@@ -1,3 +1,4 @@
+# Imports
 from utils import detector_utils as detector_utils
 import cv2
 import tensorflow as tf
@@ -8,19 +9,18 @@ from utils.detector_utils import WebcamVideoStream
 import datetime
 import argparse
 
+# Initialize variables
 frame_processed = 0
 score_thresh = 0.2
 
 # Create a worker thread that loads graph and
-# does detection on images in an input queue and puts it on an output queue
-
+# performs detection on images in an input queue and puts it on an output queue
 
 def worker(input_q, output_q, cap_params, frame_processed):
     print(">> loading frozen model for worker")
     detection_graph, sess = detector_utils.load_inference_graph()
     sess = tf.Session(graph=detection_graph)
     while True:
-        #print("> ===== in worker loop, frame ", frame_processed)
         frame = input_q.get()
         if (frame is not None):
             # Actual detection. Variable boxes contains the bounding box cordinates for hands detected,
@@ -41,9 +41,9 @@ def worker(input_q, output_q, cap_params, frame_processed):
             output_q.put(frame)
     sess.close()
 
-
 if __name__ == '__main__':
 
+    # Setup command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '-src',
@@ -103,6 +103,7 @@ if __name__ == '__main__':
         help='Size of the queue.')
     args = parser.parse_args()
 
+    # Initialize quues
     input_q = Queue(maxsize=args.queue_size)
     output_q = Queue(maxsize=args.queue_size)
 
@@ -161,7 +162,6 @@ if __name__ == '__main__':
                     print("frames processed: ", index, "elapsed time: ",
                           elapsed_time, "fps: ", str(int(fps)))
         else:
-            # print("video end")
             break
     elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
     fps = num_frames / elapsed_time
