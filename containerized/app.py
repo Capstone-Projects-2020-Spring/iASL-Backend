@@ -44,7 +44,7 @@ import cv2
 #
 MDL_DIR = os.path.join(os.getcwd(), "mdl_dir")
 MDL_JSON = "vid_model_architecture.json"
-MDL_WGT = "weights-epoch-8.hdf5"
+MDL_WGT = "vid_weights-epoch.hdf5"
 NUM_FRAMES = 40
 WIDTH = 50
 HEIGHT = 50
@@ -105,7 +105,8 @@ MAP = {0:'time',
        50:'lab',
        51:'again',
        52:'help',
-       53:'they'}
+       53:'they',
+       54:'del'}
 
 #-----------------------------------------------------------------------------
 #
